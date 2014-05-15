@@ -57,6 +57,7 @@ class Adafruit_GFX : public Print {
     setTextWrap(boolean w),
     setRotation(uint8_t r);
     uint16_t cursor_x, cursor_y;
+    int16_t getTextColor(void);
 
 #if ARDUINO >= 100
   virtual size_t write(uint8_t);

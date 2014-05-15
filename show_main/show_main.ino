@@ -437,6 +437,12 @@ int parsechar(unsigned char current_char) {
                                 Serial.print("cat the raw data image; imgsize is ");
                                 Serial.println(imgsize);
                                 return 0;
+
+                        case 'X': // draw a point using current (text) foreground colour; "X marks the spot"
+                                row = (row > right_edge0)     ? right_edge0  : row;
+                                col = (tmpnum > bottom_edge0) ? bottom_edge0 : tmpnum;
+                                tft.drawPixel(row, col, foregroundColor);
+                                break;
                                 
                         }
                         switchstate(NOTSPECIAL);

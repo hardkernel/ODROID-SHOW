@@ -429,6 +429,10 @@ void Adafruit_GFX::setTextSize(uint8_t s) {
   textsize = (s > 0) ? s : 1;
 }
 
+int16_t getTextColor(void) {
+  return textcolor;
+}
+
 void Adafruit_GFX::setTextColor(uint16_t c) {
   // For 'transparent' background, we'll set the bg
   // to the same as fg instead of using a flag
