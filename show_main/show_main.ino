@@ -159,10 +159,10 @@ void loop(void) {
                         if ((sizecnt == imgsize) || (x > 2)) {
                                 cntenable = 0;
                                 sizecnt = 0;
-                                Serial.print(sizecnt);
+                                Serial.println(sizecnt);
                                 tft.setcsbit();
                                 switchstate(NOTSPECIAL);
-                                Serial.print("NOTSPECIAL Sart");
+                                Serial.println("NOTSPECIAL Start");
                         }
                 }
         }
@@ -314,7 +314,7 @@ int parsechar(unsigned char current_char) {
                 else {
                         switch(current_char) {
                         case ';':        //Delimiter between row, col
-                                tmpnum = (tmpnum > 0) ? tmpnum - 1 : 0;
+                                // tmpnum = (tmpnum > 0) ? tmpnum - 1 : 0;
                                 //row = (tmpnum > right_edge0) ? right_edge0 : tmpnum;
                                 row = tmpnum;
                                 tmpnum = 0;
@@ -405,26 +405,37 @@ int parsechar(unsigned char current_char) {
                                 break;
 
                         case ',':
-                                tmpnum = (tmpnum > 0) ? tmpnum - 1 : 0;
+                                // tmpnum = (tmpnum > 0) ? tmpnum - 1 : 0;
                                 col = tmpnum;
                                 startImage.row = row;
                                 startImage.col = col;
                                 tmpnum = 0;
 
+                                Serial.print("Starting row: ");
+                                Serial.println(row);
+                                Serial.print("Starting col: ");
+                                Serial.println(col);
+
                                 return 0;
                                 
                         case 'i':
-                                tmpnum = (tmpnum > 0) ? tmpnum - 1 : 0;
+                                // tmpnum = (tmpnum > 0) ? tmpnum - 1 : 0;
                                 col = tmpnum;
                                 endImage.row = row;
                                 endImage.col = col;
                                 imgsize = (endImage.row - startImage.row + 1)*(endImage.col - startImage.col + 1);    
 
+                                Serial.print("Ending row: ");
+                                Serial.println(row);
+                                Serial.print("Ending col: ");
+                                Serial.println(col);
+
                                 tft.setAddrWindow(startImage.row, startImage.col, endImage.row, endImage.col);
                                 tft.setdcbit();
                                 tft.clearcsbit();
                                 switchstate(IMGSHOW);
-                                Serial.println("cat the raw data image");
+                                Serial.print("cat the raw data image; imgsize is ");
+                                Serial.println(imgsize);
                                 return 0;
                                 
                         }
