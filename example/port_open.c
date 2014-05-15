@@ -33,7 +33,7 @@ int main(void)
 	tcsetattr(usbdev, TCSANOW, &options);
 
 	while(1)
-		sleep(0.2);
+		sleep(2);
 
 	return 0;
 }
