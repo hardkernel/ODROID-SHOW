@@ -67,6 +67,14 @@ int open_serial(const char *device)
 #define COLS 320
 #define ROWS 240
 
+// global options
+
+// amount of microseconds to wait after each write. See plot_point
+// for description. These values seem to work OK:
+//   using original spiwrite: usleep(5000)
+//   with spiwrite_with_abandon: usleep(1200)
+static int usleep_time = 1200;
+
 // Colour palette (the various supported text colours).  The last
 // colour in the list is the background colour. If the point is
 // (probably) in in the set, we colour it with the background colour,
@@ -120,7 +128,15 @@ int plot_point(int fd, char colour, int x, int y) {
   offset = 0;
   do {
     wrote = write(fd, buf + offset, buf_in_use);
-    usleep(1000);		// display is currently garbled without this
+    // we need to sleep for some time to prevent a problem with the
+    // default ardino sketch spending too much time on SPI and causing
+    // serial data overruns.
+    //
+    // I've modified the sketch to use spiwrite_with_abandon in
+    // certain places to reduce the time spent on doing SPI
+    // processing. Then I've tested the delays below to see how little
+    // delay I can get away with here.
+    usleep(usleep_time);
     if (wrote == -1) {
       if (errno == EAGAIN) {
 	fprintf(stderr, "EAGAIN... rewriting\n");
@@ -215,8 +231,6 @@ void mandelbrot(int fd, int maxiter, int painter, int iteratively)
   }
 }
 
-
-
 int main(int argc, char *argv[])
 {
   extern int optind, opterr, optopt;
@@ -230,7 +244,7 @@ int main(int argc, char *argv[])
 
   int fd;
 
-  while ((opt = getopt(argc, argv, "m:p:c:i")) != -1) {
+  while ((opt = getopt(argc, argv, "m:p:c:iu:")) != -1) {
     switch (opt) {
     case 'i':
       iterative = 1;
@@ -247,6 +261,9 @@ int main(int argc, char *argv[])
 	painter = temp;
       }
       break;
+    case 'u':
+      usleep_time = atoi(optarg);
+      break;
     case 'm':
       temp = atoi(optarg);
       if (temp > 0) {
@@ -260,7 +277,7 @@ int main(int argc, char *argv[])
       break;
     default:
       fprintf(stderr,
-	      "Usage: %s [-i] [-p port] [-c [12]] [-m max_iter]\n",
+	      "Usage: %s [-i] [-p port] [-c [12]] [-m max_iter] -u microseconds\n",
 	      argv[0]);
       exit(1);
     }
@@ -277,7 +294,14 @@ int main(int argc, char *argv[])
     exit(1);
   }
   
+  // put screen in a sane state (get back to NOTSPECIAL and set
+  // correct orientation)
+  write (fd, " \e0r", 4);
+  usleep(500000); 		// much larger delay than we really need
+
+  // clear the screen
   write (fd, "\e[2J\0", 4);
+  usleep(500000);		// ditto
 
   mandelbrot(fd, max_iter, painter, iterative);
 
