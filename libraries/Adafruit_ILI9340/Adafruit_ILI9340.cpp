@@ -62,6 +62,23 @@ Adafruit_ILI9340::Adafruit_ILI9340(uint8_t cs, uint8_t dc, uint8_t rst) : Adafru
   _mosi = _sclk = 0;
 }
 
+// When running the mandelbrot program, the SPI processing is taking
+// so long to draw a pixel that the serial hardware isn't being
+// serviced quickly enough, leading to buffer overflows and lost data.
+// This spiwrite routine eliminates the NOPs after writing to the SPI
+// data register. Judicious use of spiwrite_with_abandon instead of
+// the regular spiwrite seems to reduce the amount of time the PC side
+// needs to sleep between writes when drawing individual pixels. I
+// didn't notice any adverse effects of removing the NOPs in the other
+// demos, presumably because with function return overheads and other
+// processing that goes on directly after calling here, we're already
+// getting the 11-NOP wait needed to ensure that the SPDR is empty
+// before it's written to again.
+
+void Adafruit_ILI9340::spiwrite_with_abandon(uint8_t c) {
+    SPDR = c;
+}
+
 void Adafruit_ILI9340::spiwrite(uint8_t c) {
 
   //Serial.print("0x"); Serial.print(c, HEX); Serial.print(", ");
@@ -354,7 +371,7 @@ void Adafruit_ILI9340::pushColor(uint16_t color) {
   CLEAR_BIT(csport, cspinmask);
 
   spiwrite(color >> 8);
-  spiwrite(color);
+  spiwrite_with_abandon(color);
 
   SET_BIT(csport, cspinmask);
   //digitalWrite(_cs, HIGH);
@@ -373,7 +390,7 @@ void Adafruit_ILI9340::drawPixel(int16_t x, int16_t y, uint16_t color) {
   CLEAR_BIT(csport, cspinmask);
 
   spiwrite(color >> 8);
-  spiwrite(color);
+  spiwrite_with_abandon(color);
 
   SET_BIT(csport, cspinmask);
   //digitalWrite(_cs, HIGH);
@@ -541,7 +558,7 @@ r |= 0x1;
 }
  
 
- uint8_t Adafruit_ILI9340::readcommand8(uint8_t c) {
+uint8_t Adafruit_ILI9340::readcommand8(uint8_t c) {
    digitalWrite(_dc, LOW);
    digitalWrite(_sclk, LOW);
    digitalWrite(_cs, LOW);

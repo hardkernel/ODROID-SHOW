@@ -148,6 +148,7 @@ void dummyclock(void);
 */
 
   void spiwrite(uint8_t),
+    spiwrite_with_abandon(uint8_t c),
     writecommand(uint8_t c),
     writedata(uint8_t d),
     commandList(uint8_t *addr),
