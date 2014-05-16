@@ -42,23 +42,23 @@ do
 		sleep 0.1
 		mpstat -P 3 | grep -A1 "usr" | grep -v "usr" | awk '{print ""$4"% "}' > $serialPort
 		sleep 0.1
-		echo -ne "\r\e[32mcore4:\e[31m" > $serialPort
-		sleep 0.1
-		mpstat -P 4 | grep -A1 "usr" | grep -v "usr" | awk '{print""$4"% "}' > $serialPort
-		sleep 0.1
-		echo -ne "\eM\e[32mcore5:\e[31m" > $serialPort
-		sleep 0.1
-		mpstat -P 5 | grep -A1 "usr" | grep -v "usr" | awk '{print ""$4"% "}' > $serialPort
-		sleep 0.1
-		echo -ne "\r\e[32mcore6:\e[31m" > $serialPort
-		sleep 0.1
-		mpstat -P 6 | grep -A1 "usr" | grep -v "usr" | awk '{print ""$4"% "}' > $serialPort
-		sleep 0.1
-		echo -ne "\eM\e[32mcore7:\e[31m" > $serialPort
-		sleep 0.1
-		mpstat -P 7 | grep -A1 "usr" | grep -v "usr" | awk '{print ""$4"% "}' > $serialPort
-		echo -ne "\r\e[35m" > $serialPort
-		sleep 0.1
+#		echo -ne "\r\e[32mcore4:\e[31m" > $serialPort
+#		sleep 0.1
+#		mpstat -P 4 | grep -A1 "usr" | grep -v "usr" | awk '{print""$4"% "}' > $serialPort
+#		sleep 0.1
+#		echo -ne "\eM\e[32mcore5:\e[31m" > $serialPort
+#		sleep 0.1
+#		mpstat -P 5 | grep -A1 "usr" | grep -v "usr" | awk '{print ""$4"% "}' > $serialPort
+#		sleep 0.1
+#		echo -ne "\r\e[32mcore6:\e[31m" > $serialPort
+#		sleep 0.1
+#		mpstat -P 6 | grep -A1 "usr" | grep -v "usr" | awk '{print ""$4"% "}' > $serialPort
+#		sleep 0.1
+#		echo -ne "\eM\e[32mcore7:\e[31m" > $serialPort
+#		sleep 0.1
+#		mpstat -P 7 | grep -A1 "usr" | grep -v "usr" | awk '{print ""$4"% "}' > $serialPort
+#		echo -ne "\r\e[35m" > $serialPort
+#		sleep 0.1
 		df -h | grep "sda" | awk '{print ""$1"\n\rSize  : "$2"\n\rUsed  : "$3"\n\rAvail : "$4"\n\rUse   : "$5""}' > $serialPort
 		echo -ne "$sdaInfo" > $serialPort
 		sleep 0.1
