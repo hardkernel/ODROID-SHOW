@@ -113,10 +113,17 @@ float imag_val[ROWS][COLS];
 // plot a single point (zero -> success)
 int plot_point(int fd, char colour, int x, int y) {
 
+  static char last_colour = 0;	// any invalid colour value will do
   static char buf[256];		// fixed-sized buffer can't be helped
   int offset, wrote, buf_in_use;
 
-  buf_in_use = snprintf(buf, 256, "\e[3%cm\e[%d;%dX", colour, x, y);
+  if (colour == last_colour) {
+    // don't bother sending colour change code
+    buf_in_use = snprintf(buf, 256, "\e[%d;%dX", x, y);
+  } else {
+    buf_in_use = snprintf(buf, 256, "\e[3%cm\e[%d;%dX", colour, x, y);
+  }
+  last_colour = colour;
   if (buf_in_use >= 256) {
     fprintf(stderr, "BUG: internal buffer overflow\n");
     exit(2);
@@ -124,7 +131,8 @@ int plot_point(int fd, char colour, int x, int y) {
   //  printf("Sending '%s'\n",buf);
 
   //  buf_in_use -= 1; // spr(n)intf puts on a trailing zero
-		      
+
+	      
   offset = 0;
   do {
     wrote = write(fd, buf + offset, buf_in_use);
