@@ -371,7 +371,8 @@ void Adafruit_ILI9340::pushColor(uint16_t color) {
   CLEAR_BIT(csport, cspinmask);
 
   spiwrite(color >> 8);
-  spiwrite_with_abandon(color);
+  spiwrite(color & 255);
+//  spiwrite_with_abandon(color);
 
   SET_BIT(csport, cspinmask);
   //digitalWrite(_cs, HIGH);
@@ -390,7 +391,8 @@ void Adafruit_ILI9340::drawPixel(int16_t x, int16_t y, uint16_t color) {
   CLEAR_BIT(csport, cspinmask);
 
   spiwrite(color >> 8);
-  spiwrite_with_abandon(color);
+//  spiwrite_with_abandon(color);
+  spiwrite(color);
 
   SET_BIT(csport, cspinmask);
   //digitalWrite(_cs, HIGH);

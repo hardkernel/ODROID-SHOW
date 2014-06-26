@@ -73,7 +73,7 @@ int open_serial(const char *device)
 // for description. These values seem to work OK:
 //   using original spiwrite: usleep(5000)
 //   with spiwrite_with_abandon: usleep(1200)
-static int usleep_time = 1200;
+static int usleep_time = 5000;
 
 // Colour palette (the various supported text colours).  The last
 // colour in the list is the background colour. If the point is
@@ -132,7 +132,8 @@ int plot_point(int fd, char colour, int x, int y) {
 
   //  buf_in_use -= 1; // spr(n)intf puts on a trailing zero
 
-	      
+  //  fprintf(stderr, "(%d,%d): %d\n", x, y, colour);
+
   offset = 0;
   do {
     wrote = write(fd, buf + offset, buf_in_use);
@@ -311,6 +312,7 @@ int main(int argc, char *argv[])
   write (fd, "\e[2J\0", 4);
   usleep(500000);		// ditto
 
+  // fprintf(stderr, "using painter %d, maxiter %d, iter %d\n", painter,max_iter,iterative);
   mandelbrot(fd, max_iter, painter, iterative);
 
 }

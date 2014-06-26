@@ -444,7 +444,9 @@ int parsechar(unsigned char current_char) {
                                 Serial.print("Plotting row/col: ");
                                 Serial.print(row);
                                 Serial.print("/");
-                                Serial.println(col);
+                                Serial.print(col);
+                                Serial.print(": ");
+                                Serial.println(foregroundColor);
                                 tft.drawPixel(row, col, foregroundColor);
                                 break;
                                 
