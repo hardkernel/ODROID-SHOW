@@ -5,6 +5,9 @@
 #include <time.h>
 #include <sys/utsname.h>
 #include <sys/statvfs.h>
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <resolv.h>
 
 #include <math.h>
 
@@ -90,9 +93,30 @@ void diskSpace(int usbdev)
 	sprintf(buffer, "\e[35mused : \e[32m%.2lfGB\n\r",
 						(double)diskData.used/GB);
 	writeData(usbdev, buffer);
-	sprintf(buffer, "\e[36mfree : \e[32m%.2lfGB",
+	sprintf(buffer, "\e[36mfree : \e[32m%.2lfGB\n\r",
 						(double)diskData.free/GB);
 	writeData(usbdev, buffer);
+}
+
+void ipAddresses(int usbdev)
+{
+	struct ifaddrs *ifaddr, *tmp;
+
+	getifaddrs(&ifaddr);
+	tmp = ifaddr;
+
+	while (tmp)
+	{
+		if (tmp->ifa_addr && tmp->ifa_addr->sa_family == AF_INET)
+		{
+			struct sockaddr_in *pAddr = (struct sockaddr_in *)tmp->ifa_addr;
+			sprintf(buffer, "\e[33m%s: %s\n\r", tmp->ifa_name, (char*)inet_ntoa(pAddr->sin_addr));
+			writeData(usbdev, buffer);
+		}
+		tmp = tmp->ifa_next;
+	}
+
+	freeifaddrs(ifaddr);
 }
 
 void systemInfo(int fd)
@@ -235,6 +259,7 @@ int main(int argc, char **argv)
 		systemInfo(usbdev);
 		cpuUsageDisplay(usbdev, cpuData, cpus);
 		diskSpace(usbdev);
+		ipAddresses(usbdev);
 	}
 	
 	return 0;
