@@ -41,6 +41,18 @@
 
 #define SERIAL_RX_BUFFER_SIZE 64
 
+// button 0 events
+#define BTN0_PRESSED "0P"
+#define BTN0_RELEASED "0R"
+
+// button 1 events
+#define BTN1_PRESSED "1P"
+#define BTN1_RELEASED "1R"
+
+// button 2 events
+#define BTN2_PRESSED "2P"
+#define BTN2_RELEASED "2R"
+
 volatile uint8_t _rx_buffer_head = 0;
 volatile uint8_t _rx_buffer_tail = 0;
 uint8_t _rx_buffer[SERIAL_RX_BUFFER_SIZE];
@@ -191,6 +203,7 @@ void readBtn()
                 btn2Releases = 0;
                 btn2Pushed = 1;
                 digitalWrite(6, LOW);
+                Serial.print(BTN2_PRESSED);
         }
 
         if (digitalRead(A1) && (btn2Releases == 0)) {
@@ -198,6 +211,7 @@ void readBtn()
                 btn2Presses = 0;
                 btn2Pushed = 0;
                 digitalWrite(6, HIGH);
+                Serial.print(BTN2_RELEASED);
         }
 
         if (!digitalRead(7) && (btn0Presses == 0)) {
@@ -210,6 +224,7 @@ void readBtn()
                         pwm += 30;
                 analogWrite(ledPin, pwm);
                 digitalWrite(3, LOW);
+                Serial.print(BTN0_PRESSED);
         }
 
         if (digitalRead(7) && (btn0Releases == 0)) {
@@ -217,6 +232,7 @@ void readBtn()
                 btn0Presses = 0;
                 btn0Pushed = 0;
                 digitalWrite(3, HIGH);
+                Serial.print(BTN0_RELEASED);
         }
 
         if (!digitalRead(A0) && (btn1Presses == 0)) {
@@ -229,6 +245,7 @@ void readBtn()
                         pwm -= 30;
                 analogWrite(ledPin, pwm);
                 digitalWrite(4, LOW);
+                Serial.print(BTN1_PRESSED);
         }
 
         if (digitalRead(A0) && (btn1Releases == 0)) {
@@ -236,6 +253,7 @@ void readBtn()
                 btn1Presses = 0;
                 btn1Pushed = 0;
                 digitalWrite(4, HIGH);
+                Serial.print(BTN1_RELEASED);
         }
 }
 
